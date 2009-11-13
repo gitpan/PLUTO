@@ -1,0 +1,28 @@
+$Id: Changes,v 1.3 2009-10-27 17:04:37 ubuntu Exp $
+
+0.21
+    - Added missing methods that were referred to in Lite.pm
+    - Updated the OWL SAX parser so that entities prefixed by #
+      now have theh base xmlns appended to it
+    - The owl2perl example script still doesnt work 100%, but
+      a script in SADI (sadi-generate-datatypes) does something
+      similar to this script and uses ODO to do it.
+    - Cleaned up the Makefile.PL script (uses Module::Install now)
+0.20
+	- Added trivial tests for empty test suites
+	- Added ODO::DBI::Connector tests
+	- Removed database specific database drivers
+	- Factored out ODO::Ontology::Vocabulary to just ODO::Vocabulary
+	- ODO::Node constructor bug fixes
+	- Added Jena node parser tests
+	- Added Jena system graph tests
+	- Added Jena objects DB/Settings.{n3|pm}, Graph/Settings.{n3|pm}
+	- Began update of OWL::Lite code generator to new API
+	- Removed dependence on Class::ISA
+	- Added initial N3 parser in ODO::Parser::N3; it needs expanded test case coverage
+	- Added support for manipulating graphs stored by Jena
+	- ODO::Ontology and ODO::Ontology::RDFS refactored
+	- ODO::Ontology::RDFS code generation bugs fixed
+	- ODO/RDFS.pm added; contains Perl code generated from RDFS Schema
+0.10
+	- Initial release under the EPL
