@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Jena/Graph/Storage.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  11/02/2004
-# Revision:	$Id: Storage.pm,v 1.1 2009-09-22 18:05:02 ubuntu Exp $
+# Revision:	$Id: Storage.pm,v 1.2 2009-11-25 17:58:26 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -35,6 +35,9 @@ use ODO::Query::Simple;
 use ODO::Jena::Query::Result;
 
 use ODO::Exception;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
 
 use base qw/ODO::Graph::Storage/;
 

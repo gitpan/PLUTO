@@ -10,7 +10,7 @@
 # File:        $Source: /var/lib/cvs/ODO/examples/rdfs2perl.pl,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/29/2005
-# Revision:	$Id: rdfs2perl.pl,v 1.1 2009-09-22 18:05:05 ubuntu Exp $
+# Revision:	$Id: rdfs2perl.pl,v 1.2 2009-11-24 19:09:00 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -67,7 +67,7 @@ while(@filenames) {
 	my $fn = shift @filenames;
 	
 	print STDERR "Parsing schema file: $fn\n";
-	my $statements = $parser_type->parse_file($fn);
+	my ($statements, $imports) = $parser_type->parse_file($fn);
 	$GRAPH_schema->add($statements);
 }
 

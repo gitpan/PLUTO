@@ -10,11 +10,13 @@ use vars qw{$VERSION};
 
 BEGIN {
     use vars qw{@ISA @EXPORT @EXPORT_OK};
-    $VERSION = 0.21;
+    $VERSION = 0.22;
     *PLUTO::VERSION = *VERSION;
 }
 
 1;
+
+__END__
 
 =pod
 
@@ -68,6 +70,4 @@ Edward Kawas - new ODO (a.k.a PLUTO) maintainer
 
 L<ODO::Statement>, L<ODO::Graph>, L<ODO::Graph::Simple>, L<ODO::Parser>, L<ODO::Parser::XML>, L<ODO::Query::Simple>, L<ODO::Exception>
 
-1;
 
-__END__

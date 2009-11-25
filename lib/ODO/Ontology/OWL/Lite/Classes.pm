@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite/Classes.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  05/11/2005
-# Revision:	$Id: Classes.pm,v 1.19 2009-11-05 15:11:39 ubuntu Exp $
+# Revision:	$Id: Classes.pm,v 1.20 2009-11-25 17:58:26 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -30,6 +30,9 @@ use ODO::Ontology::OWL::Lite::Properties;
 use ODO::Ontology::OWL::Vocabulary;
 
 use base qw/ODO/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.20 $ =~ /: (\d+)\.(\d+)/;
 
 __PACKAGE__->mk_accessors(qw/graph/);
 __PACKAGE__->mk_ro_accessors(qw/classes fragments/);

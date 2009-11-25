@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/RDFS/PerlEntity.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/01/2005
-# Revision:	$Id: PerlEntity.pm,v 1.1 2009-09-22 18:05:04 ubuntu Exp $
+# Revision:	$Id: PerlEntity.pm,v 1.13 2009-11-25 17:58:25 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -21,6 +21,9 @@ use warnings;
 
 use ODO::Exception;
 use ODO::Ontology::RDFS::Vocabulary;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.13 $ =~ /: (\d+)\.(\d+)/;
 
 use base qw/ODO::Ontology::PerlEntity/;
 
@@ -35,7 +38,6 @@ sub new_instance {
 	my ($self, $object_name, $resource) = @_;	
 
 	my $uri = $object_name;
-	
 	# At this point, the passed in is a URI or an ODO::Node::Resource object
 	throw ODO::Exception::Parameter::Invalid(error=> 'Resource parameter must be an ODO::Node::Resource or ODO::Node::Blank')
 		unless(UNIVERSAL::isa($resource, 'ODO::Node::Resource'));
@@ -45,12 +47,11 @@ sub new_instance {
 	
 	unless($self->__is_perl_package($object_name)) {
 		$object_name = (    $self->ontology()->get_symtab_entry($CLASS_SYMTAB_URI, $object_name)
-						|| $self->ontology()->get_symtab_entry($PROPERTY_SYMTAB_URI, $object_name) );
+						|| $self->ontology()->get_symtab_entry($PROPERTY_SYMTAB_URI, $object_name) );        
 
 		throw ODO::Exception::Runtime(error=> "Object: $uri does not have method 'new'")
 			unless($object_name);
 	}
-
 	return $object_name->new($resource, $self->ontology()->graph(), @_);
 }
 

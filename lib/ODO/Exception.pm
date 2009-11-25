@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Exception.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  06/24/2005
-# Revision:	$Id: Exception.pm,v 1.1 2009-09-22 18:05:00 ubuntu Exp $
+# Revision:	$Id: Exception.pm,v 1.2 2009-11-25 17:46:52 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -21,6 +21,9 @@ use Error qw(:try);
 package ODO::Exception;
 
 use base qw/ODO/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
 
 $SIG{__DIE__} = sub { 
 	if(!UNIVERSAL::isa($_[0], 'Exception::Class')) { 

@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/RDFS.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  03/02/2005
-# Revision:	$Id: RDFS.pm,v 1.1 2009-09-22 18:05:09 ubuntu Exp $
+# Revision:	$Id: RDFS.pm,v 1.54 2009-11-25 17:58:25 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -28,6 +28,9 @@ use ODO::Ontology::RDFS::Vocabulary;
 use ODO::Ontology::RDFS::ObjectWriter;
 
 use base qw/ODO::Ontology/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.54 $ =~ /: (\d+)\.(\d+)/;
 
 our $BASECLASS_URI = 'http://ibm-slrp.sourceforge.net/uris/odo/#base_class';
 our $BOOTSTRAPPED_TYPE = "(?:${ODO::Ontology::RDFS::Vocabulary::RDF}|${ODO::Ontology::RDFS::Vocabulary::RDFS})";
@@ -54,7 +57,7 @@ ODO::Ontology::RDFS - RDFS to Perl code generator frontend.
  my $schema = ODO::Graph::Simple->Memory(name=> 'Schema Model');
  my $source_data = ODO::Graph::Simple->Memory(name=> 'Source Data model');
  
- my $statements = ODO::Parser::XML->parse_file('/path/to/a/file.xml');
+ my ($statements, $imports) = ODO::Parser::XML->parse_file('/path/to/a/file.xml');
  $schema->add($statements);
  
  print STDERR "Generating Perl schema\n";
@@ -160,10 +163,17 @@ sub define_class_objects {
 		
 		my $superProperties = {};
 		foreach my $sp (keys(%{ $perl_class_data->{'inheritanceMap'} })) {
+			unless (defined $perl_class_data->{'inheritanceMap'}->{$sp}) {
+				delete $perl_class_data->{'inheritanceMap'}->{$sp};
+				next;
+			}
 			my $cn = $self->make_perl_package_name($self->get_symtab_entry($CLASS_SYMTAB_URI, $sp), 'PropertiesContainer');
+			if ($cn eq 'PropertiesContainer') {
+				$cn = "ODO::RDFS::Container";
+			}
 			$superProperties->{ $cn } = $cn;
 		}
-
+		
 		my $propertyContainerData = {
 			packageName=> $package->packageName(),
 			inheritanceMap=> $superProperties,
@@ -247,7 +257,10 @@ sub define_property_objects {
 		
 		my $superProperties = {};
 		foreach my $sp (keys(%{ $propertyData->{'inheritanceMap'} })) {
-			
+			unless (defined $propertyData->{'inheritanceMap'}->{$sp}) {
+				delete $propertyData->{'inheritanceMap'}->{$sp};
+				next;
+			}
 			# FIXME: Properties that directly inherit from rdf:Property must use getClassName instead
 			# because rdf:Property isa rdf:Class and was or will be defined as such
 			my $propertyName = $self->get_symtab_entry($CLASS_SYMTAB_URI, $sp) ;
@@ -299,14 +312,11 @@ sub eval_schema_objects {
 	my %evald;
 	
 	my @uri_list = keys( %{ $self->get_symbol_table($CLASS_SYMTAB_URI)->{'uris'} } );
-
 	foreach my $uri (@uri_list) {
-
 		next 
 			unless($self->get_symtab_entry($CLASS_IMPL_SYMTAB_URI, $uri)
 			    && !exists($evald{$uri})
 			    && !defined($evald{$uri}));
-
 		throw ODO::Exception::Runtime(error=> "Failed to evaluate object: $uri")
 			unless($self->eval_object($uri, \%evald, $CLASS_IMPL_SYMTAB_URI));
 	}
@@ -348,12 +358,11 @@ sub eval_object {
 				unless($self->eval_object($p_uri, $evald_hash, $impl_source));
 		}
 	}
-	
-	eval $self->get_symtab_entry($impl_source, $uri)->serialize();
+	eval ($self->get_symtab_entry($impl_source, $uri)->serialize());
 	throw ODO::Exception::Runtime(error=> "Failed in evaluation for object defined by: $uri -> $@")
 		if($@);
 	
-	eval $self->get_symtab_entry($PROPERTY_ACC_IMPL_SYMTAB_URI, $uri)->serialize();
+	eval ($self->get_symtab_entry($PROPERTY_ACC_IMPL_SYMTAB_URI, $uri)->serialize());
 	throw ODO::Exception::Runtime(error=> "Failed in evaluation for PropertyContainer object defined by: $uri -> $@")
 		if($@);
 	
@@ -464,11 +473,10 @@ sub getSchemaData {
 
 sub get_class_data {
 	my ($self, $class_uri) = @_;
-
 	my $perl_class_data = {
 		objectURI=> $class_uri,
 		packageName=> $self->get_symtab_entry($CLASS_SYMTAB_URI, $class_uri),
-		useModules=> [ 'ODO', 'ODO::Query::Simple', 'ODO::Statement::Group' ],
+		useModules=> [ 'ODO', 'ODO::Query::Simple', 'ODO::Statement::Group', 'ODO::Ontology::RDFS::BaseClass' ],
 		variables=> [],
 	};
 	
@@ -485,14 +493,10 @@ sub get_class_data {
 		while(@{ $subObjects }) {
 			my $sc = shift @{ $subObjects };
 			$perl_class_data->{'inheritanceMap'}->{ $sc } = $self->get_symtab_entry($CLASS_SYMTAB_URI, $sc);
-			
-			unless(defined($perl_class_data->{'inheritanceMap'}->{ $sc })) {			
-				print STDERR "Class URI has not been defined: $sc\n";
-				delete($perl_class_data->{'inheritanceMap'}->{ $sc });
-				
+			unless (defined($perl_class_data->{'inheritanceMap'}->{ $sc })) {
+				delete $perl_class_data->{'inheritanceMap'}->{ $sc };
 				next;
 			}
-			
 			# The base class should be included in the 'use ...' section
 			# of the package definition
 			push @{ $perl_class_data->{'useModules'} }, $self->get_symtab_entry($CLASS_SYMTAB_URI, $sc)
@@ -507,16 +511,16 @@ sub get_class_data {
 	elsif($class_uri !~ /$BOOTSTRAPPED_TYPE/) {
 		my $Class = $ODO::Ontology::RDFS::Vocabulary::Class->value();
 		my $ClassPackageName = $self->get_symtab_entry($CLASS_SYMTAB_URI, $Class);
-		
-		$perl_class_data->{'inheritanceMap'} = { $Class=> $ClassPackageName };
-
-		$perl_class_data->{'ISA'} = [ values(%{ $perl_class_data->{'inheritanceMap'} }) ];
-		push @{ $perl_class_data->{'variables'} }, '@ISA';
+		if (defined $ClassPackageName) {
+			$perl_class_data->{'inheritanceMap'} = { $Class=> $ClassPackageName };
+			$perl_class_data->{'ISA'} = [ values(%{ $perl_class_data->{'inheritanceMap'} }) ];
+			push @{ $perl_class_data->{'variables'} }, '@ISA';
+		} else {
+			$perl_class_data->{'inheritanceMap'} = { $Class=> "ODO::Ontology::RDFS::BaseClass"};
+            $perl_class_data->{'ISA'} = [ values(%{ $perl_class_data->{'inheritanceMap'} }) ];
+            push @{ $perl_class_data->{'variables'} }, '@ISA';
+		}
 	}
-	else {
-	
-	}
-	
 	return $perl_class_data;
 }
 
@@ -531,13 +535,12 @@ sub get_property_data {
 	my $propertyData = {
 		objectURI=> $uri,
 		packageName=> $self->get_symtab_entry($PROPERTY_SYMTAB_URI, $uri),
-		useModules=> [ 'ODO', 'ODO::Query::Simple', 'ODO::Statement::Group' ],
+		useModules=> [ 'ODO', 'ODO::Query::Simple', 'ODO::Statement::Group', 'ODO::RDFS::Container' ],
 		variables=> []
 	};
 	
 	my $subObjects = $self->getSchemaData($uri, $ODO::Ontology::RDFS::Vocabulary::subPropertyOf);
 
-	my $usedISA = 0;
 	$propertyData->{'inheritanceMap'} = {};
 	
 	if(scalar(@{ $subObjects }) > 0) {
@@ -545,29 +548,20 @@ sub get_property_data {
 		while(@{ $subObjects }) {
 			my $sp = shift @{ $subObjects };
 			$propertyData->{'inheritanceMap'}->{ $sp } = $self->get_symtab_entry($PROPERTY_SYMTAB_URI, $sp);
-
-			unless(defined($propertyData->{'inheritanceMap'}->{ $sp })) {			
-				print STDERR "Property URI has not been defined: $sp\n";
-				delete($propertyData->{'inheritanceMap'}->{ $sp });
-				
-				next;
-			}
+			unless (defined($propertyData->{'inheritanceMap'}->{ $sp })) {
+                delete $propertyData->{'inheritanceMap'}->{ $sp };
+                next;
+            }
 		}
 
-		push @{ $propertyData->{'variables'} }, '@ISA';
-		
-		$usedISA = 1;
 	}
 	elsif($propertyData->{'objectURI'} ne $ODO::Ontology::RDFS::Vocabulary::Property) {
 
 		my $Property = $ODO::Ontology::RDFS::Vocabulary::Property->value();
 		my $PropertyPackageName = $self->get_symtab_entry($CLASS_SYMTAB_URI, $Property);
-
-		$propertyData->{'inheritanceMap'} = { $Property=> $PropertyPackageName };
-
-		push @{ $propertyData->{'variables'} }, '@ISA';
-		
-		$usedISA = 1;
+		if (defined $PropertyPackageName) {
+			$propertyData->{'inheritanceMap'} = { $Property=> $PropertyPackageName };	
+		}
 	}
 	else {
 	}
@@ -575,10 +569,6 @@ sub get_property_data {
 	my $range = $self->getSchemaData($uri, $ODO::Ontology::RDFS::Vocabulary::range);
 	
 	if(scalar(@{ $range }) > 0) {
-		
-		# Avoids duplicate '@ISA' definitions in the 'variables' section
-		push @{ $propertyData->{'variables'} }, '@ISA'
-			unless($usedISA);
 		
 		$propertyData->{'range'} = {};
 		
@@ -601,7 +591,7 @@ sub get_property_data {
 					$name = $self->uri_to_property_package_name($sp)
 				}
 				else {
-					print STDERR "rdfs:range points to a URI that is not defined as a rdfs:Class or rdf:Property - $sp\n";
+					warn "rdfs:range points to a URI that is not defined as a rdfs:Class or rdf:Property - $sp\n";
 					
 					$name = $self->uri_to_package_name($sp);
 				}
@@ -613,11 +603,13 @@ sub get_property_data {
 			# Record the range information in the inheritance structure so the
 			# proper inheritance tree is constructed
 			$propertyData->{'range'}->{ $sp } = $name;
-			$propertyData->{'inheritanceMap'}->{ $sp } = $name;
+			$propertyData->{'inheritanceMap'}->{ $sp } = $name;	
 		}
 	}
-
-	$propertyData->{'ISA'} = [ values(%{ $propertyData->{'inheritanceMap'} }) ];
+	push @{ $propertyData->{'variables'} }, '@ISA';
+	# TODO this might not be necessary
+	$propertyData->{'ISA'} = [ values(%{ $propertyData->{'inheritanceMap'} }) ] if scalar(values(%{ $propertyData->{'inheritanceMap'} }));
+	$propertyData->{'ISA'} = ['ODO::RDFS::Container'] unless scalar(values(%{ $propertyData->{'inheritanceMap'} }));
 	
 	return $propertyData;	
 }
@@ -954,22 +946,18 @@ sub bootstrap {
 
 sub init {
 	my ($self, $config) = @_;
-	
-	if(!UNIVERSAL::can('RDFS::Resource', 'new')) {
+	if(!UNIVERSAL::can('ODO::RDFS::Resource', 'new')) {
 		# Build the RDFS Perl code or just import 
 		# already built code if available
 		$self->bootstrap();
 	}
-	
 	$self = $self->SUPER::init($config);
 	$self->params($config, qw//);
-	
 	# Class package: <basePackage>::<schema_name>::*
 	#
 	# Property package: <basePackage>::<schema_name>::Properties::*
 	my $pn = $self->make_perl_package_name($self->base_namespace(), 'Properties');
 	$self->property_namespace($pn);
-	
 	$self->define_schema_objects();
 	$self->eval_schema_objects();
 	

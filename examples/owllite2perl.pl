@@ -10,7 +10,7 @@
 # File:        $Source: /var/lib/cvs/ODO/examples/owllite2perl.pl,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/29/2005
-# Revision:	$Id: owllite2perl.pl,v 1.19 2009-10-19 18:14:38 ubuntu Exp $
+# Revision:	$Id: owllite2perl.pl,v 1.20 2009-11-17 17:24:42 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -63,12 +63,11 @@ my $GRAPH_source_data = ODO::Graph::Simple->Memory(name=> 'Source Data model');
 while(@filenames) {
 
 	my $fn = shift @filenames;
-	
 	print STDERR "Parsing schema file: $fn\n";
-	my $statements = ODO::Parser::XML->parse_file($fn);
+	my ($statements, $imports) = ODO::Parser::XML->parse_file($fn);
+	print STDERR "Ignored the following imports:\n" . Dumper($imports) . "\n" if @{$imports} > 0;
 	$GRAPH_schema->add($statements);
 	
-	open(OUT, '>out.txt');print OUT Dumper($statements); close OUT;
 }
 
 

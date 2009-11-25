@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Jena/Node.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  12/20/2006
-# Revision:	$Id: Node.pm,v 1.2 2009-09-24 21:23:31 ubuntu Exp $
+# Revision:	$Id: Node.pm,v 1.3 2009-11-25 17:58:25 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -18,6 +18,9 @@ package ODO::Jena::Node;
 
 use strict;
 use warnings;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
 
 use Class::Interfaces('ODO::Jena::Node'=> 
 	{

@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/RDFS/Vocabulary.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  03/02/2005
-# Revision:	$Id: Vocabulary.pm,v 1.6 2009-10-19 18:21:22 ubuntu Exp $
+# Revision:	$Id: Vocabulary.pm,v 1.7 2009-11-25 17:58:26 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -22,6 +22,9 @@ use warnings;
 use ODO::Node;
 
 use base qw/ODO::Ontology::Vocabulary/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.7 $ =~ /: (\d+)\.(\d+)/;
 
 use XML::Namespace
 	rdf => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',

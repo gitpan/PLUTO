@@ -3,9 +3,12 @@
 <rdf:RDF   
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"  
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-  xml:base="http://example.org/schemas/vehicles">
+  xml:base="http://example.org/schemas/vehicles"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
 
 <rdfs:Class rdf:ID="MotorVehicle"/>
+<rdfs:Class rdf:ID="Person"/>
+<rdf:Property rdf:about="&xsd;integer"/>
 
 <rdfs:Class rdf:ID="PassengerVehicle">
   <rdfs:subClassOf rdf:resource="#MotorVehicle"/>
@@ -23,10 +26,6 @@
   <rdfs:subClassOf rdf:resource="#Van"/>
   <rdfs:subClassOf rdf:resource="#PassengerVehicle"/>
 </rdfs:Class>
-
-<rdfs:Class rdf:ID="Person"/>
-
-<rdfs:Datatype rdf:about="&xsd;integer"/>
 
 <rdf:Property rdf:ID="registeredTo">
   <rdfs:domain rdf:resource="#MotorVehicle"/>

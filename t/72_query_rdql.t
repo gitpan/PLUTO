@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/t/72_query_rdql.t,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  12/08/2006
-# Revision:	$Id: 72_query_rdql.t,v 1.1 2009-09-22 18:04:55 ubuntu Exp $
+# Revision:	$Id: 72_query_rdql.t,v 1.2 2009-11-23 19:35:25 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -163,7 +163,7 @@ isa_ok($query, 'ODO::Query::RDQL', 'Verify parse result');
 
 
 my $data_graph = ODO::Graph::Simple->Memory();
-my $statements = ODO::Parser::XML->parse_file('t/data/owllite_example_schema.xml');
+my ($statements, $imports) = ODO::Parser::XML->parse_file('t/data/owllite_example_schema.xml');
 $data_graph->add($statements);
 
 # Test: ODO::Query::RDQL::DefaultHandler constructor

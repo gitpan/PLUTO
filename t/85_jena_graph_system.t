@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/t/85_jena_graph_system.t,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  10/01/2006
-# Revision:	$Id: 85_jena_graph_system.t,v 1.3 2009-10-28 17:37:58 ubuntu Exp $
+# Revision:	$Id: 85_jena_graph_system.t,v 1.4 2009-11-23 18:49:14 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -23,8 +23,6 @@ sub BEGIN {
 }
 
 # jena.dbcreate --db "jdbc:mysql://localhost:3306/jena" --dbType MySQL --dbUser jena --dbPassword password --model FirstModel
-
-use RDFS;
 
 use ODO::DB;
 use ODO::Node;

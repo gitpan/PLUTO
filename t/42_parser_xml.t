@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/t/42_parser_xml.t,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  11/29/2006
-# Revision:	$Id: 42_parser_xml.t,v 1.1 2009-09-22 18:04:56 ubuntu Exp $
+# Revision:	$Id: 42_parser_xml.t,v 1.2 2009-11-23 19:37:22 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -159,7 +159,7 @@ my $result;
 $parser = ODO::Parser::XML->new();
 isa_ok($parser, 'ODO::Parser::XML', 'Verify object creation');
 
-$result = $parser->parse($RDF2);
+($result, my $imports ) = $parser->parse($RDF2);
 ok($result, 'Parse successful');
 
 

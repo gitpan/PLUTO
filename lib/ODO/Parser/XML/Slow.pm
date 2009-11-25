@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Parser/XML/Slow.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  11/10/2004
-# Revision:	$Id: Slow.pm,v 1.40 2009-10-27 15:01:00 ubuntu Exp $
+# Revision:	$Id: Slow.pm,v 1.48 2009-11-25 17:54:26 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -23,6 +23,9 @@ use ODO::Exception;
 use ODO::Parser::XML::RDFAttributes;
 
 use XML::SAX qw/Namespaces Validation/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.48 $ =~ /: (\d+)\.(\d+)/;
 
 use base qw/ODO::Parser::XML/;
 
@@ -82,8 +85,9 @@ sub parse_rdf {
 	
 	throw ODO::Exception::RDF::Parse(error=> "Unable to parse RDF: $@")
 		if($@);
-	
-	return (scalar( @{ $handler->statements() }) >= 0) ? $handler->statements() : undef;
+	my $statements = (scalar( @{ $handler->statements() }) >= 0) ? $handler->statements() : undef;
+	my $imports = (scalar( @{ $handler->owl_imports() }) >= 0) ? $handler->owl_imports() : undef;
+	return ($statements, $imports);
 }
 
 sub init {
@@ -152,14 +156,15 @@ use XML::Namespace
 	xml=> 'http://www.w3.org/XML/1998/namespace#',
 	xsd=> 'http://www.w3.org/2001/XMLSchema#',
 	rdfs=> 'http://www.w3.org/2000/01/rdf-schema#',
-	rdf=> 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+	rdf=> 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+	owl => 'http://www.w3.org/2002/07/owl#'
 ;
 
 use Data::Dumper;
 
 use base qw/XML::SAX::Base ODO/;
 
-__PACKAGE__->mk_accessors(qw/verbose base_uri blank_node_uri_prefix stack seen_id statements blank_nodes/);
+__PACKAGE__->mk_accessors(qw/verbose base_uri blank_node_uri_prefix stack seen_id statements blank_nodes owl_imports gatherOwlImports/);
 
 
 our $RESERVED = [
@@ -197,9 +202,12 @@ sub new {
 
 	$self->stack( [] );
 	$self->statements( [] );
+    $self->owl_imports( [] );
+    $self->gatherOwlImports([]);
 
 	$self->seen_id( {} );
 	$self->blank_nodes( {} );
+	
 	
 	return $self;
 }
@@ -389,7 +397,18 @@ sub start_element {
 			$element->base_uri( $baseURI );
 			$self->base_uri( $baseURI );
 		}
+    } elsif ($element->uri() eq owl->uri('Ontology')) {
+        if (scalar @{$self->gatherOwlImports()} >= 1) {
+        	my $import = $element->attributes()->{rdf->uri('resource')};
+        	$import = $element->attributes()->{rdf->uri('about')} unless defined $import and $import ne '';
+            push @{ $self->owl_imports() }, $import if defined $import and $import ne '';
+        }
+        push @{$self->gatherOwlImports()}, "ontology";
+    } elsif ($element->uri() eq owl->uri('imports') and scalar(@{$self->gatherOwlImports()}) > 0) {
+    	my $import = $element->attributes()->{rdf->uri('resource')};
+    	push @{ $self->owl_imports() }, $import if defined $import and $import ne '';        
     }
+    
 	 
 	
 	push @{ $element->xtext() }, '<' .$sax->{'Prefix'} . ' ' . ODO::Parser::XML::RDF::Attributes->to_string($element->attributes()) . '>';
@@ -410,6 +429,11 @@ sub end_element {
 	my $element = pop @{ $self->stack() };
 	push @{ $element->xtext() }, '</' . $sax->{'Name'} . '>';
 	
+	# stop processing owl imports - well at least pop array
+	if ($element->uri() eq owl->uri('Ontology')) {
+        pop @{$self->gatherOwlImports()};
+    }
+    
 	if ( scalar(@{ $self->stack() }) > 0 ) {
 		push @{ $self->stack()->[-1]->children() }, $element;
 		

@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  02/28/2005
-# Revision:	$Id: Lite.pm,v 1.85 2009-11-13 20:33:22 ubuntu Exp $
+# Revision:	$Id: Lite.pm,v 1.88 2009-11-25 17:58:25 ubuntu Exp $
 #
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -17,12 +17,17 @@
 package ODO::Ontology::OWL::Lite;
 use strict;
 use warnings;
+
 use ODO::Ontology::RDFS;
 use ODO::Ontology::RDFS::Vocabulary;
 use ODO::Ontology::OWL::Lite::Classes;
 use ODO::Ontology::OWL::Lite::Properties;
 use ODO::Ontology::OWL::Lite::ObjectWriter;
 use base qw/ODO::Ontology/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.88 $ =~ /: (\d+)\.(\d+)/;
+
 our $ANNOTATION_SYMTAB_URI =
   'http://ibm-slrp.sourceforge.net/uris/odo/2007/01/annotation/';
 our $CLASS_SYMTAB_URI = 'http://ibm-slrp.sourceforge.net/uris/odo/2007/01/classes/';
@@ -160,6 +165,7 @@ sub init {
 sub registerClasses {
 	my $self = shift;
 	foreach my $classURI ( keys( %{ $self->classObjects()->classes() } ) ) {
+		next if $classURI eq 'http://www.w3.org/2002/07/owl#Thing';
 		my $className = $self->makeName($classURI);
 		if ( $self->get_symtab_entry( $CLASS_SYMTAB_URI, $classURI ) ) {
 			throw ODO::Exception::Ontology::DuplicateClass(

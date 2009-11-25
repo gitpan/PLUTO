@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/t/82_ontology_jena.t,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  10/01/2006
-# Revision:	$Id: 82_ontology_jena.t,v 1.2 2009-10-28 16:45:32 ubuntu Exp $
+# Revision:	$Id: 82_ontology_jena.t,v 1.4 2009-11-23 20:29:18 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -19,7 +19,6 @@ use Test::More qw/no_plan/;
 use Data::Dumper;
 
 sub BEGIN {
-	use_ok( 'RDFS' );
 	use_ok( 'ODO::Jena::Graph::Settings' );
 	use_ok( 'ODO::Jena::DB::Settings' );
 }
@@ -28,7 +27,7 @@ use ODO::Node;
 use ODO::Graph::Simple;
 
 
-my $graph = ODO::Graph::Simple->Memory(name=> 'Graph');
+my $graph = ODO::Graph::Simple->Memory({name=> 'Graph'});
 
 
 my $subject = ODO::Node::Resource->new('something');

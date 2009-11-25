@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Fragments.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  03/02/2005
-# Revision:	$Id: Fragments.pm,v 1.1 2009-09-22 18:05:06 ubuntu Exp $
+# Revision:	$Id: Fragments.pm,v 1.3 2009-11-25 17:58:25 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -25,6 +25,9 @@ use ODO::Ontology::OWL::Vocabulary;
 use ODO::Ontology::RDFS::Vocabulary;
 
 use base qw/ODO/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
 
 =head1 NAME
 
@@ -81,10 +84,10 @@ sub getClassUnionOf {
 	
 	my $results = $self->graph()->query( $queryString )->results();
 
-	my $list = RDFS::List->new($results->[0]->object(), $self->graph());
+	my $list = ODO::RDFS::List->new($results->[0]->object(), $self->graph());
 	my $listIter = ODO::Ontology::RDFS::List::Iterator->new($list);
 	unless(UNIVERSAL::isa($listIter, 'ODO::Ontology::RDFS::List::Iterator')) {
-		die("Could not create iterator for RDFS::List");
+		die("Could not create iterator for ODO::RDFS::List");
 	}
 
 	# Iterate through the list keeping the string value in the results
@@ -142,10 +145,10 @@ sub getDatatypeRange {
 	
 	my $results = $self->graph()->query( $queryString )->results();
 
-	my $list = RDFS::List->new($results->[0]->object(), $self->graph());
+	my $list = ODO::RDFS::List->new($results->[0]->object(), $self->graph());
 	my $listIter = ODO::Ontology::RDFS::List::Iterator->new($list);
 
-	throw ODO::Exception::Runtime(error=> "Could not create iterator for RDFS::List")
+	throw ODO::Exception::Runtime(error=> "Could not create iterator for ODO::RDFS::List")
 		unless(UNIVERSAL::isa($listIter, 'ODO::Ontology::RDFS::List::Iterator'));
 
 	$results = [];

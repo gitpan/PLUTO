@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  12/21/2004
-# Revision:	$Id: Ontology.pm,v 1.1 2009-09-22 18:05:00 ubuntu Exp $
+# Revision:	$Id: Ontology.pm,v 1.6 2009-11-25 17:46:52 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -25,6 +25,9 @@ use ODO::Query::Simple;
 use URI;
 
 use base qw/ODO/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.6 $ =~ /: (\d+)\.(\d+)/;
 
 our @METHODS = qw/graph schema_graph schema_name base_namespace base_class/;
 

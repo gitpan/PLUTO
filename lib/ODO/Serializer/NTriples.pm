@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Serializer/NTriples.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/14/2005
-# Revision:	$Id: NTriples.pm,v 1.1 2009-09-22 18:05:09 ubuntu Exp $
+# Revision:	$Id: NTriples.pm,v 1.2 2009-11-25 17:47:37 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -20,6 +20,9 @@ use strict;
 use warnings;
 
 use base qw/ODO::Serializer/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
 
 =head1 NAME
 

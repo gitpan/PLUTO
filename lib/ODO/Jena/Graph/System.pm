@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Jena/Graph/System.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  10/29/2004
-# Revision:	$Id: System.pm,v 1.1 2009-09-22 18:05:02 ubuntu Exp $
+# Revision:	$Id: System.pm,v 1.3 2009-11-25 17:58:26 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -19,7 +19,6 @@ package ODO::Jena::Graph::System;
 use strict;
 use warnings;
 
-use RDFS;
 use ODO::Node;
 
 use ODO::Jena;
@@ -35,6 +34,9 @@ use ODO::Jena::Graph::Settings;
 use ODO::Exception;
 use ODO::Statement;
 use ODO::Query::Simple;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
 
 use base qw/ODO::Jena::Graph/;
 

@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Query/Simple/Mapper.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  01/17/2005
-# Revision:	$Id: Mapper.pm,v 1.1 2009-09-22 18:05:02 ubuntu Exp $
+# Revision:	$Id: Mapper.pm,v 1.2 2009-11-25 17:53:53 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -18,7 +18,8 @@ package ODO::Query::Simple::Mapper;
 
 use strict;
 use warnings;
-
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
 use ODO::Node;
 use ODO::Statement;
 

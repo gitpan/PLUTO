@@ -3,7 +3,7 @@
 #  
 #  (C) Copyright IBM Corporation 2006  All Rights Reserved.
 #  
-#  $Id: RDFAttributes.pm,v 1.9 2009-10-19 18:21:22 ubuntu Exp $
+#  $Id: RDFAttributes.pm,v 1.10 2009-11-25 17:54:26 ubuntu Exp $
 #
 
 package ODO::Parser::XML::RDF::Attributes;
@@ -12,7 +12,8 @@ use strict;
 use warnings;
 
 use base qw/ODO/;
-
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.10 $ =~ /: (\d+)\.(\d+)/;
 use ODO::Exception;
 
 use XML::Namespace

@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Statement.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  10/05/2004
-# Revision:	$Id: Statement.pm,v 1.1 2009-09-22 18:05:01 ubuntu Exp $
+# Revision:	$Id: Statement.pm,v 1.2 2009-11-25 17:46:51 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -23,6 +23,9 @@ use ODO::Exception;
 use ODO::Node;
 
 use base qw/ODO/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
 
 use Digest::MD5 qw/md5_hex/;
 

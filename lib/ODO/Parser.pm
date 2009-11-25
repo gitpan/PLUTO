@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Parser.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  10/05/2004
-# Revision:	$Id: Parser.pm,v 1.6 2009-10-19 18:21:23 ubuntu Exp $
+# Revision:	$Id: Parser.pm,v 1.7 2009-11-25 17:46:52 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -21,6 +21,9 @@ use warnings;
 
 use ODO::Exception;
 use ODO::Node;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.7 $ =~ /: (\d+)\.(\d+)/;
 
 use XML::Namespace
 	rdf=> 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';

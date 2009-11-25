@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/t/81_ontology_rdfs.t,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  11/29/2006
-# Revision:	$Id: 81_ontology_rdfs.t,v 1.1 2009-09-22 18:04:54 ubuntu Exp $
+# Revision:	$Id: 81_ontology_rdfs.t,v 1.6 2009-11-24 19:05:34 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -18,19 +18,20 @@ use Test::More qw/no_plan/;
 
 use strict;
 use warnings;
+use Data::Dumper;
 
 sub BEGIN {
 	use_ok('ODO::Graph::Simple');
 	use_ok('ODO::Parser::XML');	
+	use_ok('ODO::RDFS::Resource');
+	use_ok('ODO::RDFS::Class');
 	use_ok('ODO::Ontology::RDFS');
 }
 
-my $statements;
+my $source_data = ODO::Graph::Simple->Memory({name=> 'Source Data model'});
 
-my $source_data = ODO::Graph::Simple->Memory(name=> 'Source Data model');
-
-my $schema_graph = ODO::Graph::Simple->Memory(name=> 'Schema Model');
-$statements = ODO::Parser::XML->parse_file('t/data/rdfs_example_schema.xml');
+my $schema_graph = ODO::Graph::Simple->Memory({name=> 'Schema Model'});
+my ($statements, $imports) = ODO::Parser::XML->parse_file('t/data/rdfs_example_schema.xml');
 $schema_graph->add($statements);
 
 
@@ -42,11 +43,11 @@ isa_ok($VEHICLES->ontology(), 'ODO::Ontology::RDFS', 'Parsed RDF schema manageme
 #
 # Test whether or not we have the new objects
 #
-my $resource = RDFS::Resource->new(ODO::Node::Resource->new('http://tempuri.org/someResource'), $source_data);
-isa_ok($resource, 'RDFS::Resource', 'Base class named Resource');
+my $resource = ODO::RDFS::Resource->new(ODO::Node::Resource->new('http://tempuri.org/someResource'), $source_data);
+isa_ok($resource, 'ODO::RDFS::Resource', 'Base class named Resource');
 
-my $klass = RDFS::Class->new(ODO::Node::Resource->new('http://tempuri.org/someClassDefinition'), $source_data);
-isa_ok($klass, 'RDFS::Class', 'Base class named Class');
+my $klass = ODO::RDFS::Class->new(ODO::Node::Resource->new('http://tempuri.org/someClassDefinition'), $source_data);
+isa_ok($klass, 'ODO::RDFS::Class', 'Base class named Class');
 
 my $van = Van->new(ODO::Node::Resource->new('http://tempuri.org/myVan'), $source_data);
 isa_ok($van, 'MotorVehicle', 'Test object inheritance');
@@ -70,11 +71,11 @@ isa_ok($van->properties()->driver()->[0], 'Properties::driver', 'Test the Proper
 # Perl package names
 #
 
-$resource = $VEHICLES->new_instance('RDFS::Resource', ODO::Node::Resource->new('http://tempuri.org/someResource'));
-isa_ok($resource, 'RDFS::Resource', 'new_instance from Perl package');
+$resource = $VEHICLES->new_instance('ODO::RDFS::Resource', ODO::Node::Resource->new('http://tempuri.org/someResource'));
+isa_ok($resource, 'ODO::RDFS::Resource', 'new_instance from Perl package');
 
-$klass = $VEHICLES->new_instance('RDFS::Class', ODO::Node::Resource->new('http://tempuri.org/someClassDefinition'));
-isa_ok($klass, 'RDFS::Class', 'new_instance from Perl package');
+$klass = $VEHICLES->new_instance('ODO::RDFS::Class', ODO::Node::Resource->new('http://tempuri.org/someClassDefinition'));
+isa_ok($klass, 'ODO::RDFS::Class', 'new_instance from Perl package');
 
 $van = $VEHICLES->new_instance('Van', ODO::Node::Resource->new('http://tempuri.org/myVan'));
 isa_ok($van, 'Van', 'new_instance from Perl package');
@@ -87,11 +88,11 @@ isa_ok($driver, 'Properties::driver', 'new_instance from Perl package');
 # URI's now
 #
 
-$resource = $VEHICLES->new_instance($ODO::Ontology::RDFS::Vocabulary::Resource->value(), ODO::Node::Resource->new('http://tempuri.org/someResource'));
-isa_ok($resource, 'RDFS::Resource', 'new_instance from URI');
-
-$klass = $VEHICLES->new_instance($ODO::Ontology::RDFS::Vocabulary::Class->value(), ODO::Node::Resource->new('http://tempuri.org/someClassDefinition'));
-isa_ok($klass, 'RDFS::Class', 'new_instance from URI');
+#$resource = $VEHICLES->new_instance($ODO::Ontology::RDFS::Vocabulary::Resource->value(), ODO::Node::Resource->new('http://tempuri.org/someResource'));
+#isa_ok($resource, 'ODO::RDFS::Resource', 'new_instance from URI');
+#
+#$klass = $VEHICLES->new_instance($ODO::Ontology::RDFS::Vocabulary::Class->value(), ODO::Node::Resource->new('http://tempuri.org/someClassDefinition'));
+#isa_ok($klass, 'ODO::RDFS::Class', 'new_instance from URI');
 
 $van = $VEHICLES->new_instance('http://example.org/schemas/vehicles#Van', ODO::Node::Resource->new('http://tempuri.org/myVan'));
 isa_ok($van, 'Van', 'new_instance from URI');

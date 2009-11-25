@@ -8,7 +8,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite/Fragments.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/29/2005
-# Revision:	$Id: Fragments.pm,v 1.49 2009-11-10 16:26:45 ubuntu Exp $
+# Revision:	$Id: Fragments.pm,v 1.59 2009-11-25 17:58:26 ubuntu Exp $
 #
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -16,6 +16,8 @@
 package ODO::Ontology::OWL::Lite::Fragments;
 use strict;
 use warnings;
+
+use ODO::RDFS::List;
 use ODO::Exception;
 use ODO::Graph::Simple;
 use ODO::Ontology::RDFS;
@@ -23,6 +25,10 @@ use ODO::Ontology::OWL::Vocabulary;
 use ODO::Ontology::RDFS::Vocabulary;
 use ODO::Ontology::RDFS::List::Iterator;
 use base qw/ODO/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.59 $ =~ /: (\d+)\.(\d+)/;
+
 __PACKAGE__->mk_accessors(qw/graph/);
 
 sub getClasses {
@@ -88,10 +94,10 @@ sub getClassIntersectionOf {
 							  restrictions => [],
 	};
 	if ( scalar( @{$classResults} ) ) {
-		my $list = RDFS::List->new( $classResults->[0]->object(), $self->graph() );
+		my $list = ODO::RDFS::List->new( $classResults->[0]->object(), $self->graph() );
 		my $listIter = ODO::Ontology::RDFS::List::Iterator->new($list);
 		throw ODO::Exception::Runtime(
-								   error => "Could not create iterator for RDFS::List" )
+								   error => "Could not create iterator for ODO::RDFS::List" )
 		  unless ( UNIVERSAL::isa( $listIter, 'ODO::Ontology::RDFS::List::Iterator' ) );
 		my $iterElement;
 		while ( ( $iterElement = $listIter->next() ) ) {
@@ -492,10 +498,10 @@ sub getPropertyDomain {
 		my $unionResults = $self->graph()->query($queryString)->results();
 		return (wantarray) ? @{$results} : $results
 		  unless ( scalar( @{$unionResults} ) > 0 );
-		my $list = RDFS::List->new( $unionResults->[0]->object(), $self->graph() );
+		my $list = ODO::RDFS::List->new( $unionResults->[0]->object(), $self->graph() );
 		my $listIter = ODO::Ontology::RDFS::List::Iterator->new($list);
 		throw ODO::Exception::Runtime(
-								   error => "Could not create iterator for RDFS::List" )
+								   error => "Could not create iterator for ODO::RDFS::List" )
 		  unless ( UNIVERSAL::isa( $listIter, 'ODO::Ontology::RDFS::List::Iterator' ) );
 
 		# Iterate through the list keeping the string value in the results

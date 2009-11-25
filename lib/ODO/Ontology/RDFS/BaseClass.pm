@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/RDFS/BaseClass.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  02/22/2005
-# Revision:	$Id: BaseClass.pm,v 1.1 2009-09-22 18:05:04 ubuntu Exp $
+# Revision:	$Id: BaseClass.pm,v 1.4 2009-11-25 17:58:25 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -28,6 +28,9 @@ use ODO::Query::RDQL::Parser;
 use ODO::Ontology::RDFS::Vocabulary;
 
 use base qw/ODO/;
+
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /: (\d+)\.(\d+)/;
 
 our @METHODS = qw/graph subject propertyContainerName properties propertyURIMap/;
 
@@ -94,7 +97,7 @@ sub query {
 
 sub get_property_values {
 	my ($self, $property_perl_package_name) = @_;
-	
+	eval "require $property_perl_package_name";
 	# Only Resources can have properties
 	throw ODO::Exception::Runtime(error=> 'Subject is not a ODO::Node::Resource')
 		unless(UNIVERSAL::isa($self->subject(), 'ODO::Node::Resource'));

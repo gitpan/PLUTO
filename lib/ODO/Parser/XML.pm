@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Parser/XML.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  10/01/2006
-# Revision:	$Id: XML.pm,v 1.1 2009-09-22 18:05:08 ubuntu Exp $
+# Revision:	$Id: XML.pm,v 1.4 2009-11-25 17:54:26 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -22,7 +22,8 @@ use warnings;
 use ODO::Exception;
 
 use Module::Load::Conditional qw/can_load/;
-
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /: (\d+)\.(\d+)/;
 use base qw/ODO::Parser/;
 
 our $_BACKEND = 'ODO::Parser::XML::Slow';
@@ -65,8 +66,8 @@ sub parse {
 
 	$self = $self->SUPER::new(%parameters)
 		unless(ref $self);
-
-	return $self->parse_rdf($rdf);
+	my ($statements, $imports) = $self->parse_rdf($rdf); 
+	return ($statements, $imports);
 }
 
 
@@ -84,10 +85,10 @@ sub parse_file {
 		unless(ref $self);
 	
 	open(RDF_FILE, $filename);
-	my $statements = $self->parse_rdf(\*RDF_FILE);
+	my ($statements, $imports) = $self->parse_rdf(\*RDF_FILE);
 	close(RDF_FILE);
 	
-	return $statements;
+	return ($statements, $imports);
 }
 
 

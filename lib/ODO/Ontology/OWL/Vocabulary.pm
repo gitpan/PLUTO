@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Vocabulary.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  03/02/2005
-# Revision:	$Id: Vocabulary.pm,v 1.8 2009-10-19 18:21:22 ubuntu Exp $
+# Revision:	$Id: Vocabulary.pm,v 1.9 2009-11-25 17:58:25 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -23,6 +23,8 @@ use ODO::Node;
 
 use XML::Namespace	owl => 'http://www.w3.org/2002/07/owl#';
 
+use vars qw /$VERSION/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.9 $ =~ /: (\d+)\.(\d+)/;
 
 use base qw/ODO::Ontology::Vocabulary/;
 

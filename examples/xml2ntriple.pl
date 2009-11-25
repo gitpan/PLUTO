@@ -10,7 +10,7 @@
 # File:        $Source: /var/lib/cvs/ODO/examples/xml2ntriple.pl,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/29/2005
-# Revision:	$Id: xml2ntriple.pl,v 1.1 2009-09-22 18:05:05 ubuntu Exp $
+# Revision:	$Id: xml2ntriple.pl,v 1.2 2009-11-24 19:45:30 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -66,7 +66,7 @@ while(@filenames) {
 	print STDERR "Reading file: $fn\n";
 	
 	print "Parsing RDF...";
-	my $statements = ODO::Parser::XML->parse_file( $fn );
+	my ($statements, $imports) = ODO::Parser::XML->parse_file( $fn );
 	
 	unless(UNIVERSAL::isa($statements, 'ARRAY')) {	
 		print STDERR "Error: Unable to parse RDF in file: $fn\n";
