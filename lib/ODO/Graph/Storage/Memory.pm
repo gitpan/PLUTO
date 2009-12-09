@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Graph/Storage/Memory.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  12/22/2004
-# Revision:	$Id: Memory.pm,v 1.2 2009-11-25 17:58:26 ubuntu Exp $
+# Revision:	$Id: Memory.pm,v 1.3 2009-12-03 18:34:17 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -30,7 +30,7 @@ use ODO::Query::RDQL::DefaultHandler;
 use base qw/ODO::Graph::Storage/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
 
 __PACKAGE__->mk_ro_accessors(qw/subjects predicates objects statements/);
 
@@ -122,8 +122,10 @@ sub issue_query {
 	}
 	
 	my $rdql_query = ODO::Query::RDQL::Parser->parse($query);
-
-	my $result_graph = ODO::Query::RDQL::DefaultHandler->new(data=> $self->parent_graph(), query_object=> $rdql_query)->evaluate_query();
+    return 
+        ODO::Query::Simple::Result->new(source_graph=> $self->parent_graph(), query=> ODO::Query::RDQL->new(), results=> [])
+      unless defined $rdql_query;
+	my $result_graph = ODO::Query::RDQL::DefaultHandler->new(data => $self->parent_graph(), query_object => $rdql_query)->evaluate_query();
 	
 	my $statements = $result_graph->query($ODO::Query::Simple::ALL_STATEMENTS)->results();
 	return ODO::Query::Simple::Result->new(source_graph=> $self->parent_graph(), query=> $rdql_query, results=> $statements);	

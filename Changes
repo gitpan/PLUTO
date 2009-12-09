@@ -1,5 +1,9 @@
-$Id: Changes,v 1.7 2009-11-25 19:02:34 ubuntu Exp $
+$Id: Changes,v 1.8 2009-12-09 16:59:50 ubuntu Exp $
 
+0.23
+    - added a check in issue_query that checks to see whether 
+      the $query was parsed correctly into a ODO::Query::RDQL
+      in ODO::Graph::Storage::Memory.
 0.22
     - when parsing owl files, import statements are parsed out,
       but not traversed. They are returned to the user though.

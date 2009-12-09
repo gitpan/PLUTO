@@ -1,4 +1,4 @@
-	# $Id: Makefile.PL,v 1.12 2009-11-24 19:38:15 ubuntu Exp $
+	# $Id: Makefile.PL,v 1.13 2009-12-09 17:02:05 ubuntu Exp $
 	# Load the Module::Install bundled in ./inc/
 	use inc::Module::Install;
 	use 5.006;
@@ -7,7 +7,7 @@
 	name 'PLUTO';
 	author 'IBM';
 	license 'eclipse';
-    version '0.22';
+    version '0.23';
 	
 	all_from 'lib/ODO.pm';
 
