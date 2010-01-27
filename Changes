@@ -1,9 +1,12 @@
-$Id: Changes,v 1.8 2009-12-09 16:59:50 ubuntu Exp $
+$Id: Changes,v 1.10 2010-01-27 21:13:52 ubuntu Exp $
 
-0.23
+0.23/0.24
     - added a check in issue_query that checks to see whether 
       the $query was parsed correctly into a ODO::Query::RDQL
       in ODO::Graph::Storage::Memory.
+    - added more text for warning of missing properties.
+    - bug fix: subClassOf was being added as a restriction and
+      not to inheritance 
 0.22
     - when parsing owl files, import statements are parsed out,
       but not traversed. They are returned to the user though.

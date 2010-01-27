@@ -9,10 +9,11 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  02/28/2005
-# Revision:	$Id: Lite.pm,v 1.88 2009-11-25 17:58:25 ubuntu Exp $
+# Revision:	$Id: Lite.pm,v 1.90 2010-01-27 20:11:46 ubuntu Exp $
 #
 # Contributors:
 #     IBM Corporation - initial API and implementation
+#     Edward Kawas - bug fixes, etc
 #
 package ODO::Ontology::OWL::Lite;
 use strict;
@@ -26,7 +27,7 @@ use ODO::Ontology::OWL::Lite::ObjectWriter;
 use base qw/ODO::Ontology/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.88 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.90 $ =~ /: (\d+)\.(\d+)/;
 
 our $ANNOTATION_SYMTAB_URI =
   'http://ibm-slrp.sourceforge.net/uris/odo/2007/01/annotation/';
@@ -303,8 +304,11 @@ sub defineClasses {
 			  );
 			#throw ODO::Exception::Ontology::MissingProperty(
 			#	error =>
-			warn "Unable to find property name for URI: " . $r->{'onProperty'} unless ($propertyName);
-			$propertyName = $r->{'onProperty'} unless $propertyName;
+			warn "Unable to find property name for URI: " . $r->{'onProperty'} 
+			. ".\nPlease make sure that your OWL file contains a declaration!" 
+			  unless ($propertyName);
+			  
+			$propertyName = $self->makeName($r->{'onProperty'}) unless $propertyName;
 			$r->{'propertyName'} = $propertyName;
 			push @restrictionProperties,
 			  {

@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite/Classes.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  05/11/2005
-# Revision:	$Id: Classes.pm,v 1.20 2009-11-25 17:58:26 ubuntu Exp $
+# Revision:	$Id: Classes.pm,v 1.23 2010-01-27 20:17:31 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -32,7 +32,7 @@ use ODO::Ontology::OWL::Vocabulary;
 use base qw/ODO/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.20 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.23 $ =~ /: (\d+)\.(\d+)/;
 
 __PACKAGE__->mk_accessors(qw/graph/);
 __PACKAGE__->mk_ro_accessors(qw/classes fragments/);
@@ -91,7 +91,6 @@ sub __fill_class {
 	my %restrictions_found;
 	my $subClassOf = $self->__get_schema_data($classURI, $ODO::Ontology::RDFS::Vocabulary::subClassOf);
 	foreach my $sc (@{ $subClassOf }) {
-	
 		# Only accept sub classes if we have defined the class,
 		# everything else is a restriction.
 		if(exists($self->classes()->{ $sc })) {
@@ -100,7 +99,9 @@ sub __fill_class {
 		else {
 			# This is a restriction class
 			my $r = $self->fragments()->getClassRestriction($sc);
-			push @restrictions, $r;
+			# this could be a subclass uri (perhaps the model doesnt include a definition)
+			push @restrictions, $r if scalar(keys(%{$r})) > 1;
+            push @inheritance, $sc unless scalar(keys(%{$r})) > 1;
 			#push @restrictions, $r unless $restrictions_found{$r->onProperty};
 			#$restrictions_found{$r->onProperty} = 1;
 			
