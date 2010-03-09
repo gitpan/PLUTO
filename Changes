@@ -1,5 +1,19 @@
-$Id: Changes,v 1.10 2010-01-27 21:13:52 ubuntu Exp $
+$Id: Changes,v 1.13 2010-02-17 17:21:20 ubuntu Exp $
 
+0.25
+    - added a select_parser method so that you can specify
+      the sax parser to use (defaulted in the past to pureperl
+      which is way too slow)
+    - added dependency for XML::LibXML (since we use their SAX
+      parser now by default);
+    - added a verbose param to Ontology/OWL/Lite.pm that triggers 
+      a call to debug() in init()
+    - added a 'do_impl' param to Ontology/OWL/Lite.pm that triggers
+      the ->implementations() part of Lite.pm. Look at owllite2perl.pl
+      for how to set the parameter.
+    - DBD::mysql is now a dependency iff mysql is accessible on
+      the users machine.
+      
 0.23/0.24
     - added a check in issue_query that checks to see whether 
       the $query was parsed correctly into a ODO::Query::RDQL

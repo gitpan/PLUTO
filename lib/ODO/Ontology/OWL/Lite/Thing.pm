@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite/Thing.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/27/2005
-# Revision:	$Id: Thing.pm,v 1.2 2009-11-25 17:58:26 ubuntu Exp $
+# Revision:	$Id: Thing.pm,v 1.3 2010-02-17 17:17:09 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -29,7 +29,7 @@ use ODO::Query::Simple::Parser;
 use ODO::Ontology::RDFS::Vocabulary;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
 
 use base qw/ODO/;
 
@@ -45,7 +45,7 @@ sub value {
 	my $self = shift;
 	
 	throw ODO::Exception::Runtime(error=> 'Subject is not an ODO::Node object')
-		unless(UNIVERSAL::isa($self->subject(), 'ODO::Node'));
+		unless($self->subject()->isa('ODO::Node'));
 	
 	return $self->subject()->value();
 }
@@ -246,7 +246,7 @@ sub getPropertyFromGraph {
 	
 	# Only Resources can have properties
 	throw ODO::Exception::Runtime(error=> 'Subject is not a ODO::Graph::Node::Resource')
-		unless(UNIVERSAL::isa($self->subject(), 'ODO::Graph::Node::Resource'));
+		unless($self->subject()->isa('ODO::Graph::Node::Resource'));
 	
 	throw ODO::Exception::Runtime(error=> 'Missing ODO::Graph object')
 		unless($self->graph());

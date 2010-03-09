@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  02/28/2005
-# Revision:	$Id: Lite.pm,v 1.90 2010-01-27 20:11:46 ubuntu Exp $
+# Revision:	$Id: Lite.pm,v 1.93 2010-02-17 17:17:09 ubuntu Exp $
 #
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -27,7 +27,7 @@ use ODO::Ontology::OWL::Lite::ObjectWriter;
 use base qw/ODO::Ontology/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.90 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.93 $ =~ /: (\d+)\.(\d+)/;
 
 our $ANNOTATION_SYMTAB_URI =
   'http://ibm-slrp.sourceforge.net/uris/odo/2007/01/annotation/';
@@ -112,6 +112,13 @@ sub normalize {
 
 sub init {
 	my ( $self, $config ) = @_;
+	# check to see if we need to be verbose
+	my $isVerbose = $config->{'verbose'} || undef;
+	delete $config->{'verbose'};
+	
+	my $isImpl = $config->{'do_impl'} || undef;
+	delete $config->{'do_impl'};
+
 	$self = $self->SUPER::init($config);
 
 	# Make sure we have RDFS eval'd in to our namespace
@@ -137,7 +144,6 @@ sub init {
 	$self->add_symtab_entry( $DATATYPE_SYMTAB_URI,
 							 $ODO::Ontology::OWL::Vocabulary::DatatypeProperty->value(),
 							 'OWL::DatatypeProperty' );
-	$self->implementations( ODO::Ontology::OWL::Lite::Implementations->new() );
 
 	# Fill the properties and classes of an OWL ontology
 	my $p = ODO::Ontology::OWL::Lite::Properties->new( graph => $self->schema_graph() );
@@ -146,17 +152,19 @@ sub init {
 	$self->classObjects($c);
 	$self->registerProperties();
 	$self->registerClasses();
-	$self->implementations()->objectProperties( $self->defineObjectProperties() );
-	$self->implementations()->datatypeProperties( $self->defineDatatypeProperties() );
-	$self->implementations()->annotationProperties( $self->defineAnnotationProperties() );
-
 	my $classDescriptions = $self->defineClasses();
-	$self->implementations()->class( $classDescriptions->{'classes'} );
-	$self->implementations()->propertyContainers( $classDescriptions->{'propertyContainers'} );
-
+	
+	if ($isImpl) {
+		$self->implementations( ODO::Ontology::OWL::Lite::Implementations->new() );
+		$self->implementations()->objectProperties( $self->defineObjectProperties() );
+		$self->implementations()->datatypeProperties( $self->defineDatatypeProperties() );
+		$self->implementations()->annotationProperties( $self->defineAnnotationProperties() );
+		$self->implementations()->class( $classDescriptions->{'classes'} );
+		$self->implementations()->propertyContainers( $classDescriptions->{'propertyContainers'} );
+	}
     $self->normalize();
 	# diagnostic ...
-	eval {$self->debug;};
+	eval {$self->debug;} if $isVerbose;
 	return $self;
 }
 
@@ -546,7 +554,7 @@ sub getObjectPropertiesForClass {
 		foreach my $uri (
 				   @{ $self->propertyObjects()->object()->{$propertyURI}->{'domain'} } )
 		{
-			$uri = $uri->object->value if UNIVERSAL::isa($uri, 'ODO::Statement');
+			$uri = $uri->object->value if $uri->isa('ODO::Statement');
 			push @properties, $propertyURI, next
 			  if ( $uri eq $classURI );
 		}
@@ -558,8 +566,8 @@ sub getAnnotationPropertiesForClass {
 	my $self     = shift;
 	my $classURI = shift;
 	my @properties;
-	foreach my $uri ( keys( %{ $self->annotationPropertyMap() } ) ) {
-	}
+#	foreach my $uri ( keys( %{ $self->annotationPropertyMap() } ) ) {
+#	}
 	return \@properties;
 }
 

@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Statement.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  10/05/2004
-# Revision:	$Id: Statement.pm,v 1.2 2009-11-25 17:46:51 ubuntu Exp $
+# Revision:	$Id: Statement.pm,v 1.3 2010-02-17 17:17:09 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -25,7 +25,7 @@ use ODO::Node;
 use base qw/ODO/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
 
 use Digest::MD5 qw/md5_hex/;
 
@@ -115,7 +115,7 @@ sub equal {
 	my ($self, $statement) = @_;
 	
 	throw ODO::Exception::Parameter::Invalid(error=> 'Parameter must be an ODO::Statement')
-		unless(UNIVERSAL::isa($statement, 'ODO::Statement'));
+		unless($statement->isa('ODO::Statement'));
 		
 	return 1
 		if(   $self->s()->equal($statement->s())
@@ -137,15 +137,15 @@ sub strict_equal {
 	my ($self, $statement) = @_;
 	
 	throw ODO::Exception::Parameter::Invalid(error=> 'Parameter must be an ODO::Statement')
-		unless(UNIVERSAL::isa($statement, 'ODO::Statement'));
+		unless($statement->isa('ODO::Statement'));
 
 	# TripleMatches are equal iff each component is the same.. 
 	# 'Any' nodes must be 'Any' nodes
 	foreach my $comp ('s', 'p', 'o') {
 	
 		return 0
-			if(    UNIVERSAL::isa($self->$comp(), 'ODO::Node::Any')
-			   && !UNIVERSAL::isa($statement->$comp(), 'ODO::Node::Any'));
+			if(    $self->$comp()->isa('ODO::Node::Any')
+			   && !$statement->$comp()->isa('ODO::Node::Any'));
 	}
 	
 	return 1
@@ -180,9 +180,9 @@ sub init {
 	my ($self, $config) = @_;
 	
 	unless(
-	       UNIVERSAL::isa($config->{'s'}, 'ODO::Node')
-		&& UNIVERSAL::isa($config->{'p'}, 'ODO::Node')
-		&& UNIVERSAL::isa($config->{'o'}, 'ODO::Node')
+	       $config->{'s'}->isa('ODO::Node')
+		&& $config->{'p'}->isa('ODO::Node')
+		&& $config->{'o'}->isa('ODO::Node')
 		) {
 
 		throw ODO::Exception::Parameter::Invalid(error=> 'All three parameters to constructor must be ODO::Node');

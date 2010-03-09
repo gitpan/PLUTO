@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Graph/Storage/Memory.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  12/22/2004
-# Revision:	$Id: Memory.pm,v 1.3 2009-12-03 18:34:17 ubuntu Exp $
+# Revision:	$Id: Memory.pm,v 1.4 2010-02-17 17:17:09 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -30,7 +30,7 @@ use ODO::Query::RDQL::DefaultHandler;
 use base qw/ODO::Graph::Storage/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /: (\d+)\.(\d+)/;
 
 __PACKAGE__->mk_ro_accessors(qw/subjects predicates objects statements/);
 
@@ -115,7 +115,7 @@ sub issue_query {
 	my ($self, $query, $query_options) = @_;
 
 	return $self->issue_simple_query($query)
-		if(UNIVERSAL::isa($query, 'ODO::Query::Simple'));
+		if($query->isa('ODO::Query::Simple'));
 
 	my $query_lang = 'RDQL';	
 	if(UNIVERSAL::isa($query_options, 'HASH')) {

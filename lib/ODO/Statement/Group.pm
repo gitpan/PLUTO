@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Statement/Group.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  01/18/2005
-# Revision:	$Id: Group.pm,v 1.2 2009-11-25 17:47:23 ubuntu Exp $
+# Revision:	$Id: Group.pm,v 1.3 2010-02-17 17:17:09 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -25,7 +25,7 @@ use ODO::Node;
 use base qw/ODO/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
 
 __PACKAGE__->mk_accessors(qw/subject predicates properties/);
 
@@ -64,10 +64,10 @@ sub add {
 	}
 		
 	throw ODO::Exception::Parameter::Invalid(error=> 'Predicate node must be an ODO::Node::Resource')
-		unless(UNIVERSAL::isa($predicate, 'ODO::Node::Resource'));
+		unless($predicate->isa('ODO::Node::Resource'));
 	
 	throw ODO::Exception::Parameter::Invalid(error=> 'Object node must be an ODO::Node')
-		unless(UNIVERSAL::isa($object, 'ODO::Node'));
+		unless($object->isa('ODO::Node'));
 	
 	# Properties are keys in the hash, that hold arrays of objects for that property
 	unless(exists($self->properties()->{ $predicate->hash() })) {
@@ -94,10 +94,10 @@ sub delete {
 	}
 		
 	throw ODO::Exception::Parameter::Invalid(error=> 'Predicate node must be an ODO::Node::Resource')
-		unless(UNIVERSAL::isa($predicate, 'ODO::Node::Resource'));
+		unless($predicate->isa('ODO::Node::Resource'));
 	
 	throw ODO::Exception::Parameter::Invalid(error=> 'Object node must be an ODO::Node')
-		unless(UNIVERSAL::isa($object, 'ODO::Node'));
+		unless($object->isa('ODO::Node'));
 	
 	# FIXME: Finish delete method	
 }
@@ -171,7 +171,7 @@ sub init {
 	$subject = ODO::Node::Resource->new($subject);
 	
 	throw ODO::Exception::Parameter::Invalid(error=> 'Subject for a ODO::Statement::Group must be an ODO::Node::Resource')
-		unless(UNIVERSAL::isa($subject, 'ODO::Node::Resource'));
+		unless($subject->isa('ODO::Node::Resource'));
 	
 	$self->subject($subject);
 	$self->properties( {} );

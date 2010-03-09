@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Fragments.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  03/02/2005
-# Revision:	$Id: Fragments.pm,v 1.3 2009-11-25 17:58:25 ubuntu Exp $
+# Revision:	$Id: Fragments.pm,v 1.4 2010-02-17 17:17:09 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -27,7 +27,7 @@ use ODO::Ontology::RDFS::Vocabulary;
 use base qw/ODO/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /: (\d+)\.(\d+)/;
 
 =head1 NAME
 
@@ -53,7 +53,7 @@ sub getClassOneOf {
 	my ($self, $class, $classURI) = @_;
 
 	$classURI = $class->value()
-		if(UNIVERSAL::isa($class, 'ODO::Node::Resource'));
+		if($class->isa('ODO::Node::Resource'));
 		
 	my $owlOneOf = $ODO::Ontology::OWL::Vocabulary::oneOf;
 	
@@ -75,7 +75,7 @@ sub getClassUnionOf {
 	my ($self, $class, $classURI) = @_;
 
 	$classURI = $class->value()
-		if(UNIVERSAL::isa($class, 'ODO::Node::Resource'));
+		if($class->isa('ODO::Node::Resource'));
 		
 	my $owlUnionOf = $ODO::Ontology::OWL::Vocabulary::unionOf;
 	
@@ -86,7 +86,7 @@ sub getClassUnionOf {
 
 	my $list = ODO::RDFS::List->new($results->[0]->object(), $self->graph());
 	my $listIter = ODO::Ontology::RDFS::List::Iterator->new($list);
-	unless(UNIVERSAL::isa($listIter, 'ODO::Ontology::RDFS::List::Iterator')) {
+	unless($listIter->isa('ODO::Ontology::RDFS::List::Iterator')) {
 		die("Could not create iterator for ODO::RDFS::List");
 	}
 
@@ -97,7 +97,7 @@ sub getClassUnionOf {
 	my $iterElement;
 	while( ($iterElement = $listIter->next()) ) {
 
-		if(UNIVERSAL::isa($iterElement, 'ODO::Node::Blank')) {
+		if($iterElement->isa('ODO::Node::Blank')) {
 			# TODO: Die here?
 		}
 		else {
@@ -118,7 +118,7 @@ sub getClassComplementOf {
 	my ($self, $class, $classURI) = @_;
 
 	$classURI = $class->value()
-		if(UNIVERSAL::isa($class, 'ODO::Node::Resource'));
+		if($class->isa('ODO::Node::Resource'));
 		
 	my $owlComplementOf = $ODO::Ontology::OWL::Vocabulary::complementOf;
 	
@@ -149,7 +149,7 @@ sub getDatatypeRange {
 	my $listIter = ODO::Ontology::RDFS::List::Iterator->new($list);
 
 	throw ODO::Exception::Runtime(error=> "Could not create iterator for ODO::RDFS::List")
-		unless(UNIVERSAL::isa($listIter, 'ODO::Ontology::RDFS::List::Iterator'));
+		unless($listIter->isa('ODO::Ontology::RDFS::List::Iterator'));
 
 	$results = [];
 	
@@ -171,7 +171,7 @@ sub getPropertyRange {
 
 	my $results = $self->SUPER::getPropertyRange($propertyURI);
 	
-	if(scalar(@{ $results }) == 1 && UNIVERSAL::isa($results->[0]->object(), 'ODO::Node::Blank')) {
+	if(scalar(@{ $results }) == 1 && $results->[0]->object()->isa('ODO::Node::Blank')) {
 		$results = $self->getDatatypeRange($results->[0]->object()->value());
 	}
 

@@ -10,7 +10,7 @@
 # File:        $Source: /var/lib/cvs/ODO/examples/owllite2perl.pl,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/29/2005
-# Revision:	$Id: owllite2perl.pl,v 1.20 2009-11-17 17:24:42 ubuntu Exp $
+# Revision:	$Id: owllite2perl.pl,v 1.21 2010-02-16 15:46:14 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -71,7 +71,7 @@ while(@filenames) {
 }
 
 
-my $SCHEMA = ODO::Ontology::OWL::Lite->new(graph=> $GRAPH_source_data, schema_graph=> $GRAPH_schema, schemaName=> $GLOBAL_schemaName);
+my $SCHEMA = ODO::Ontology::OWL::Lite->new(do_impl => 1, graph=> $GRAPH_source_data, schema_graph=> $GRAPH_schema, schemaName=> $GLOBAL_schemaName);
 
 
 # To STDOUT by default

@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Node.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  11/02/2004
-# Revision:	$Id: Node.pm,v 1.2 2009-11-25 17:46:51 ubuntu Exp $
+# Revision:	$Id: Node.pm,v 1.4 2010-02-17 17:20:23 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -24,7 +24,7 @@ use base qw/ODO/;
 use Digest::MD5 qw/md5_hex/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /: (\d+)\.(\d+)/;
 
 __PACKAGE__->mk_accessors(qw/value/);
 
@@ -61,7 +61,9 @@ sub new {
 
 	return $node
 		if(    scalar(@_) == 1
-			&& UNIVERSAL::isa($node, $self));
+		    && $node->isa( ref $self )
+		 );
+			#&& UNIVERSAL::isa($node, $self));
 	
 	return $self->SUPER::new(@_);
 }
@@ -97,8 +99,9 @@ sub equal {
 	my ($self, $this_node) = @_;
 
 	return 1 
-		if(   UNIVERSAL::isa($this_node, 'ODO::Node::Any') 
-		   || UNIVERSAL::isa($self, 'ODO::Node::Any'));
+		if(   $this_node->isa('ODO::Node::Any') # UNIVERSAL::isa($this_node, 'ODO::Node::Any') 
+		   || $self->isa('ODO::Node::Any') # UNIVERSAL::isa($self, 'ODO::Node::Any')
+		);
 	
 	return ($this_node->hash() eq $self->hash()) ? 1 : 0;
 }

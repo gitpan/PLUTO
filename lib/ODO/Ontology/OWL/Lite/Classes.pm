@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite/Classes.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  05/11/2005
-# Revision:	$Id: Classes.pm,v 1.23 2010-01-27 20:17:31 ubuntu Exp $
+# Revision:	$Id: Classes.pm,v 1.26 2010-03-09 17:57:59 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -32,7 +32,7 @@ use ODO::Ontology::OWL::Vocabulary;
 use base qw/ODO/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.23 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.26 $ =~ /: (\d+)\.(\d+)/;
 
 __PACKAGE__->mk_accessors(qw/graph/);
 __PACKAGE__->mk_ro_accessors(qw/classes fragments/);
@@ -43,7 +43,7 @@ sub init {
 
 	$self->params($config, qw/graph/);
 
-	$self->{'classes'} = {};	
+	$self->{'classes'} = {};
 	$self->{'fragments'} = ODO::Ontology::OWL::Lite::Fragments->new(graph=> $self->graph());
 	
 	$self->__make_class_objects();
@@ -58,7 +58,7 @@ sub __make_class_objects {
 	my $rawClasses = $self->fragments()->getClasses();
 	
 	throw ODO::Exception::Runtime(error=> 'Could not get class fragment interface ODO::Ontology::OWL::Lite::Fragments::Classes')
-		unless(UNIVERSAL::isa($rawClasses, 'ODO::Ontology::OWL::Lite::Fragments::Classes'));
+		unless($rawClasses->isa('ODO::Ontology::OWL::Lite::Fragments::Classes'));
 	
 	
 	#
@@ -83,33 +83,32 @@ sub __fill_class {
 	my $classURI = $class->{'object'}->value();
 	
 	$class->{'intersections'} = $self->fragments()->getClassIntersectionOf($classURI);
-	
-	my @inheritance;
-	my @restrictions;
-	my @equivalentclasses;
-	
-	my %restrictions_found;
-	my $subClassOf = $self->__get_schema_data($classURI, $ODO::Ontology::RDFS::Vocabulary::subClassOf);
-	foreach my $sc (@{ $subClassOf }) {
-		# Only accept sub classes if we have defined the class,
-		# everything else is a restriction.
-		if(exists($self->classes()->{ $sc })) {
-			push @inheritance, $sc
-		}
-		else {
-			# This is a restriction class
-			my $r = $self->fragments()->getClassRestriction($sc);
-			# this could be a subclass uri (perhaps the model doesnt include a definition)
-			push @restrictions, $r if scalar(keys(%{$r})) > 1;
-            push @inheritance, $sc unless scalar(keys(%{$r})) > 1;
-			#push @restrictions, $r unless $restrictions_found{$r->onProperty};
-			#$restrictions_found{$r->onProperty} = 1;
-			
-		}		
-	}
-	
-	#process equivalent class
-	$subClassOf = $self->__get_schema_data($classURI, $ODO::Ontology::OWL::Vocabulary::equivalentClass);
+		
+    my @inheritance;
+    my @restrictions;
+    my @equivalentclasses;
+    
+    my $subClassOf = $self->__get_schema_data($classURI, $ODO::Ontology::RDFS::Vocabulary::subClassOf);
+    foreach my $sc (@{ $subClassOf }) {
+        # Only accept sub classes if we have defined the class,
+        # everything else is a restriction.
+        if(exists($self->classes()->{ $sc })) {
+            push @inheritance, $sc
+        }
+        else {
+            # This is a restriction class
+            my $r = $self->fragments()->getClassRestriction($sc);
+            # this could be a subclass uri (perhaps the model doesnt include a definition)
+            push @restrictions, $r if scalar(keys(%{$r})) > 1;
+            unless (scalar(keys(%{$r})) > 1) {
+                push @inheritance, $sc;
+                warn("please make sure to import or define: $sc");
+            }
+        }
+    }
+    
+    #process equivalent class
+    $subClassOf = $self->__get_schema_data($classURI, $ODO::Ontology::OWL::Vocabulary::equivalentClass);
     foreach my $sc (@{ $subClassOf }) {
         # $sc is a nodeURI
         
@@ -122,15 +121,12 @@ sub __fill_class {
             # This is a restriction class
             my $r = $self->fragments()->getEquivalentClasses($sc, $classURI );
             push @equivalentclasses, $r;
-            #push @equivalentclasses, $r if $r->{'onProperty'};
-        }       
+        }
     }
-	
-	$class->{'equivalent'} = \@equivalentclasses;
-	$class->{'inheritance'} = \@inheritance;
-	$class->{'restrictions'} = \@restrictions;
-	
-	
+    
+    $class->{'equivalent'} = \@equivalentclasses;
+    $class->{'inheritance'} = \@inheritance;
+    $class->{'restrictions'} = \@restrictions;
 }
 
 
@@ -141,10 +137,10 @@ sub __get_schema_data {
 	my ($self, $schemaObject, $property) = @_;
 	
 	$schemaObject = ODO::Node::Resource->new( $schemaObject )
-		unless(UNIVERSAL::isa($schemaObject, 'ODO::Node::Resource'));
+		unless($schemaObject->isa('ODO::Node::Resource'));
 		
 	$property = ODO::Node::Resource->new( $property )
-		unless(UNIVERSAL::isa($property, 'ODO::Node::Resource'));
+		unless($property->isa('ODO::Node::Resource'));
 	
 	my $query = ODO::Query::Simple->new($schemaObject, $property, undef);
 	

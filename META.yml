@@ -38,7 +38,8 @@ requires:
   Template: 2.15
   Time::HiRes: 1.20
   URI: 1.35
+  XML::LibXML: 1.70
   XML::Namespace: 0.02
   XML::RegExp: 0.02
   XML::SAX: 0.96
-version: 0.24
+version: 0.25

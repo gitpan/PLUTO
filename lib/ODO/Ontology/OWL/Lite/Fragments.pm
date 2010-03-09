@@ -8,7 +8,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite/Fragments.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/29/2005
-# Revision:	$Id: Fragments.pm,v 1.59 2009-11-25 17:58:26 ubuntu Exp $
+# Revision:	$Id: Fragments.pm,v 1.60 2010-02-17 17:17:09 ubuntu Exp $
 #
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -27,7 +27,7 @@ use ODO::Ontology::RDFS::List::Iterator;
 use base qw/ODO/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.59 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.60 $ =~ /: (\d+)\.(\d+)/;
 
 __PACKAGE__->mk_accessors(qw/graph/);
 
@@ -65,7 +65,7 @@ sub getClasses {
 		{
 			$classes_seen{ $tmp_r->object()->value } = 1;
 			my $class = ODO::Statement->new(
-						 UNIVERSAL::isa( $tmp_r->object(), 'ODO::Node::Blank' ) ? $tmp_r->object() : ODO::Node::Resource->new( $tmp_r->object->value ),
+						 $tmp_r->object()->isa('ODO::Node::Blank' ) ? $tmp_r->object() : ODO::Node::Resource->new( $tmp_r->object->value ),
 						 ODO::Node::Resource->new(
 									 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
 						 ODO::Node::Resource->new('http://www.w3.org/2002/07/owl#Class')
@@ -82,7 +82,7 @@ sub getClassIntersectionOf {
 	my ( $self, $class ) = @_;
 	my $classURI = $class;
 	$classURI = $class->value()
-	  if ( UNIVERSAL::isa( $class, 'ODO::Node::Resource' ) );
+	  if ( $class->isa( 'ODO::Node::Resource' ) );
 	my $owlIntersectionOf = $ODO::Ontology::OWL::Vocabulary::intersectionOf->value();
 	my $owlClass          = $ODO::Ontology::OWL::Vocabulary::Class->value();
 
@@ -98,10 +98,10 @@ sub getClassIntersectionOf {
 		my $listIter = ODO::Ontology::RDFS::List::Iterator->new($list);
 		throw ODO::Exception::Runtime(
 								   error => "Could not create iterator for ODO::RDFS::List" )
-		  unless ( UNIVERSAL::isa( $listIter, 'ODO::Ontology::RDFS::List::Iterator' ) );
+		  unless ( $listIter->isa( 'ODO::Ontology::RDFS::List::Iterator' ) );
 		my $iterElement;
 		while ( ( $iterElement = $listIter->next() ) ) {
-			if ( UNIVERSAL::isa( $iterElement, 'ODO::Node::Blank' ) ) {
+			if ( $iterElement->isa( 'ODO::Node::Blank' ) ) {
 				my $restriction = $self->getClassRestriction( $iterElement->value() );
 				push @{ $classIntersection->{'restrictions'} }, $restriction;
 			} else {
@@ -463,7 +463,7 @@ sub hasFunctionalProperty {
 	my ( $self, $property ) = @_;
 	my $propertyURI = $property;
 	$propertyURI = $property->value()
-	  if ( UNIVERSAL::isa( $property, 'ODO::Node::Resource' ) );
+	  if ( $property->isa( 'ODO::Node::Resource' ) );
 	my $rdfType               = $ODO::Ontology::RDFS::Vocabulary::type->value();
 	my $owlFunctionalProperty = $ODO::Ontology::RDFS::Vocabulary::Datatype->value();
 	my $queryString =
@@ -502,14 +502,14 @@ sub getPropertyDomain {
 		my $listIter = ODO::Ontology::RDFS::List::Iterator->new($list);
 		throw ODO::Exception::Runtime(
 								   error => "Could not create iterator for ODO::RDFS::List" )
-		  unless ( UNIVERSAL::isa( $listIter, 'ODO::Ontology::RDFS::List::Iterator' ) );
+		  unless ( $listIter->isa( 'ODO::Ontology::RDFS::List::Iterator' ) );
 
 		# Iterate through the list keeping the string value in the results
 		# returned to the caller
 		$results = [];
 		my $iterElement;
 		while ( ( $iterElement = $listIter->next() ) ) {
-			if ( UNIVERSAL::isa( $iterElement, 'ODO::Node::Blank' ) ) {
+			if ( $iterElement->isa( 'ODO::Node::Blank' ) ) {
 
 				# FIXME: ???
 			} else {

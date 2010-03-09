@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Serializer/NTriples.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  04/14/2005
-# Revision:	$Id: NTriples.pm,v 1.2 2009-11-25 17:47:37 ubuntu Exp $
+# Revision:	$Id: NTriples.pm,v 1.3 2010-02-17 17:17:09 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -22,7 +22,7 @@ use warnings;
 use base qw/ODO::Serializer/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /: (\d+)\.(\d+)/;
 
 =head1 NAME
 
@@ -78,13 +78,13 @@ sub serialize {
 		
 		foreach my $comp ('s', 'p', 'o') {
 
-			if(UNIVERSAL::isa($t->$comp(), 'ODO::Node::Blank')) {
+			if($t->$comp()->isa('ODO::Node::Blank')) {
 				$statementString .= $t->$comp()->value() . ' ';
 			}		
-			elsif(UNIVERSAL::isa($t->$comp(), 'ODO::Node::Resource')) {
+			elsif($t->$comp()->isa('ODO::Node::Resource')) {
 				$statementString .= '<' . $t->$comp()->value() . '> ';
 			}
-			elsif(UNIVERSAL::isa($t->$comp(), 'ODO::Node::Literal')) {
+			elsif($t->$comp()->isa('ODO::Node::Literal')) {
 				$statementString .= '"' . $t->$comp()->value() . '"';
 				
 				if($t->$comp()->datatype()) {

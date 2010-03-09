@@ -9,7 +9,7 @@
 # File:        $Source: /var/lib/cvs/ODO/lib/ODO/Ontology/OWL/Lite/Properties.pm,v $
 # Created by:  Stephen Evanchik( <a href="mailto:evanchik@us.ibm.com">evanchik@us.ibm.com </a>)
 # Created on:  05/01/2005
-# Revision:	$Id: Properties.pm,v 1.6 2009-11-25 17:58:26 ubuntu Exp $
+# Revision:	$Id: Properties.pm,v 1.8 2010-03-09 17:57:59 ubuntu Exp $
 # 
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.6 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.8 $ =~ /: (\d+)\.(\d+)/;
 
 use ODO::Exception;
 use ODO::Node;
@@ -64,7 +64,7 @@ sub __make_property_objects {
 	my $rawProperties = $self->fragments()->getObjectProperties();
 	
 	throw ODO::Exception::Runtime(error=> 'Could not get property fragment interface ODO::Ontology::OWL::Lite::Fragments::ObjectProperties')	
-		unless(UNIVERSAL::isa($rawProperties, 'ODO::Ontology::OWL::Lite::Fragments::ObjectProperties'));
+		unless($rawProperties->isa('ODO::Ontology::OWL::Lite::Fragments::ObjectProperties'));
 	
 	my $owlObjectProperty = $ODO::Ontology::OWL::Vocabulary::ObjectProperty->value();
 	my $owlInverseFunctionalProperty = $ODO::Ontology::OWL::Vocabulary::InverseFunctionalProperty->value();
@@ -88,9 +88,6 @@ sub __make_property_objects {
 		elsif($typeURI eq $owlSymmetricProperty) {
 			$self->symmetric()->{ $propertyURI } = $property->subject();			
 		}
-		else {
-		
-		}		
 		
 		# Just an ObjectProperty, but it could be an ObjectProperty with
 		# a transitive, symmetric, inverse functional which will get detected
@@ -188,10 +185,10 @@ sub __get_schema_data {
 	my $schemaObject = shift;
 	my $property = shift;	
 	$schemaObject = ODO::Node::Resource->new( $schemaObject )
-		unless(UNIVERSAL::isa($schemaObject, 'ODO::Node::Resource'));
+		unless($schemaObject->isa('ODO::Node::Resource'));
 		
 	$property = ODO::Node::Resource->new( $property )
-		unless(UNIVERSAL::isa($property, 'ODO::Node::Resource'));
+		unless($property->isa('ODO::Node::Resource'));
 	
 	my $query = ODO::Query::Simple->new($schemaObject, $property, undef);
 	my @results = map { $_->object()->value() } @{ $self->graph()->query($query)->results() };

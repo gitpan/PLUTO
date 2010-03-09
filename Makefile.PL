@@ -1,4 +1,4 @@
-	# $Id: Makefile.PL,v 1.14 2010-01-27 21:15:11 ubuntu Exp $
+	# $Id: Makefile.PL,v 1.16 2010-02-17 17:21:14 ubuntu Exp $
 	# Load the Module::Install bundled in ./inc/
 	use inc::Module::Install;
 	use 5.006;
@@ -7,7 +7,7 @@
 	name 'PLUTO';
 	author 'IBM';
 	license 'eclipse';
-    version '0.24';
+    version '0.25';
 	
 	all_from 'lib/ODO.pm';
 
@@ -23,6 +23,7 @@
 	requires 'Aspect'                    => '0.10';
 	requires 'URI'                       => '1.35';
 	requires 'XML::SAX'                  => '0.96';
+	requires 'XML::LibXML'               => '1.70';
 	requires 'XML::RegExp'               => '0.02';
 	requires 'XML::Namespace'            => '0.02';
 	requires 'Time::HiRes'               => '1.20';
@@ -33,7 +34,14 @@
 	requires 'Params::Check'             => '0.23';
 	requires 'Parse::RecDescent'         => '1.93';
 	requires 'Template'                  => '2.15';
-	requires 'DBD::mysql'                => '4';
+	
+	# install DBD::mysql if user has mysql running
+	if (`mysql --version 2>&1` =~ m/^mysql\s+Ver\s+.*$/) {
+	   requires 'DBD::mysql'                => '4';	
+	} else {
+		print STDOUT 'DBD::mysql not required since mysql doesnt seem to be accessible!' . "\n";
+	}
+	
 	
 	no_index directory => 'examples';
 	
