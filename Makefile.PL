@@ -1,4 +1,4 @@
-	# $Id: Makefile.PL,v 1.16 2010-02-17 17:21:14 ubuntu Exp $
+	# $Id: Makefile.PL,v 1.17 2010-05-20 17:29:09 ubuntu Exp $
 	# Load the Module::Install bundled in ./inc/
 	use inc::Module::Install;
 	use 5.006;
@@ -7,7 +7,7 @@
 	name 'PLUTO';
 	author 'IBM';
 	license 'eclipse';
-    version '0.25';
+    version '0.26';
 	
 	all_from 'lib/ODO.pm';
 
@@ -29,7 +29,7 @@
 	requires 'Time::HiRes'               => '1.20';
 	requires 'SQL::Library'              => '0.0.3';
 	requires 'Digest::MD5'               => '2.34';
-	requires 'Module::Load::Conditional' => '0.08';
+	requires 'Module::Load::Conditional' => '0.38';
 	requires 'Module::Load'              => '0.10';
 	requires 'Params::Check'             => '0.23';
 	requires 'Parse::RecDescent'         => '1.93';

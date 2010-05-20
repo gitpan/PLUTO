@@ -31,7 +31,7 @@ requires:
   Exception::Class: 1.22
   Exception::Class::DBI: 0.94
   Module::Load: 0.10
-  Module::Load::Conditional: 0.08
+  Module::Load::Conditional: 0.38
   Params::Check: 0.23
   Parse::RecDescent: 1.93
   SQL::Library: 0.0.3
@@ -42,4 +42,4 @@ requires:
   XML::Namespace: 0.02
   XML::RegExp: 0.02
   XML::SAX: 0.96
-version: 0.25
+version: 0.26
