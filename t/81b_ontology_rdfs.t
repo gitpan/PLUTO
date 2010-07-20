@@ -31,7 +31,7 @@ sub BEGIN {
 my $source_data = ODO::Graph::Simple->Memory({name=> 'Source Data model'});
 
 my $schema_graph = ODO::Graph::Simple->Memory({name=> 'Schema Model'});
-my ($statements, $imports) = ODO::Parser::XML->parse_file('t/data/rdfs_example_schema.xml');
+my ($statements, $imports) = ODO::Parser::XML->parse_file('t/data/rdfs_example_schema-2.xml');
 $schema_graph->add($statements);
 
 

@@ -42,4 +42,4 @@ requires:
   XML::Namespace: 0.02
   XML::RegExp: 0.02
   XML::SAX: 0.96
-version: 0.26
+version: 0.27

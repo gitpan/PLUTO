@@ -2,6 +2,10 @@ $Id: README,v 1.2 2009-11-13 20:31:06 ubuntu Exp $
 
 PLUTO: Son of ODO (http://ibm-slrp.sourceforge.net/) - Ontologies, Databases, Optimization
 
+
+* NOTES: If you plan on modifying this distribution and you obtain the code from a repository 
+and NOT from CPAN, please make sure that you have Module::Install installed on your machine!
+
 * ABOUT
 
 This is a pure Perl semantic web library that implements an RDF parser, RDQL, SPARQL 

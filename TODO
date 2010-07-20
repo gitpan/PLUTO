@@ -1,5 +1,6 @@
 $Id: TODO,v 1.2 2009-11-13 20:10:02 ubuntu Exp $
-     
+ * update references to RDFS.pm ... 
+  
  * ONGOING
 	- Create better test cases for everything
 	- Continue to refine documentation
@@ -14,3 +15,4 @@ $Id: TODO,v 1.2 2009-11-13 20:10:02 ubuntu Exp $
  	- Build out database persistence layer
  	- Add more triple format parsers and serializers (Turtle, N3, etc.)
  	- Create AOP code for debug/development support
+ 

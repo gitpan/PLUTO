@@ -16,10 +16,12 @@
 #     IBM Corporation - initial API and implementation
 #
 use strict;
+use warnings;
 
 use ODO::Parser::XML;
 use ODO::Graph::Simple;
 use ODO::Ontology::OWL::Lite;
+
 use Data::Dumper;
 
 use Getopt::Long;

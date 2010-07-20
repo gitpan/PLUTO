@@ -25,7 +25,7 @@ use ODO::Parser::XML::RDFAttributes;
 use XML::SAX qw/Namespaces Validation/;
 
 use vars qw /$VERSION/;
-$VERSION = sprintf "%d.%02d", q$Revision: 1.48 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.49 $ =~ /: (\d+)\.(\d+)/;
 
 use base qw/ODO::Parser::XML/;
 
@@ -393,7 +393,10 @@ sub start_element {
 	if ($element->uri() eq rdf->uri('RDF')) {
 		my $baseURI = $element->attributes()->{xml->uri('base')};
 		if ($baseURI) {
-			$baseURI =~ s/\#$//i;
+			# strip all trailing # from URI
+			$baseURI =~ s/#*$//i;
+			# append a hash unless uri ends with /
+			$baseURI .= '#' unless $baseURI =~ m/\/$/;
 			$element->base_uri( $baseURI );
 			$self->base_uri( $baseURI );
 		}
@@ -417,8 +420,11 @@ sub start_element {
 
 sub characters {
 	my ($self, $chars) = @_;
-
-	$chars->{'Data'} =~ s/\n/\\n/g;
+	# trim space from characters
+	$chars->{'Data'} =~ s/^\s+//gm;
+	$chars->{'Data'} =~ s/\s+$//gm;
+	# if there is no text, return
+	return if $chars->{'Data'} eq ''; 
 	$self->stack()->[-1]->text($chars->{'Data'});
 	push @{ $self->stack()->[-1]->xtext() }, $chars->{'Data'};
 }
@@ -436,7 +442,6 @@ sub end_element {
     
 	if ( scalar(@{ $self->stack() }) > 0 ) {
 		push @{ $self->stack()->[-1]->children() }, $element;
-		
 		@{ $element->xtext() } = grep { defined($_) } @{ $element->xtext() };
 		$self->stack()->[-1]->xtext()->[1] = join('', @{ $element->xtext() } );
 	}
@@ -541,8 +546,9 @@ sub nodeElement {
 		if ($idURI =~ m|.*://|){
 			$s = ODO::Node::Resource->new( $idURI );
 		} else {
-			$idURI = $baseURI . $idURI if $baseURI =~ m/\#$/;
-			$idURI = $baseURI . '#'. $idURI unless $baseURI =~ m/\#$/;
+			$idURI =~ s/^#*// if $idURI;
+			$idURI = $baseURI . $idURI if $baseURI =~ m/#$/ or $baseURI =~ m/\/$/;
+			$idURI = $baseURI . '#'. $idURI unless $baseURI =~ m/#$/ or $baseURI =~ m/\/$/;
 			$s = ODO::Node::Resource->new( $idURI);
 		}
 		
@@ -571,7 +577,12 @@ sub nodeElement {
 		if ($aboutUri =~ m|.*://|) {
 			$s = ODO::Node::Resource->new( $aboutUri);
 		} else {
-		  $s = ODO::Node::Resource->new( ($baseURI || '') . $aboutUri);
+			$aboutUri =~ s/^#*//;
+			if ($baseURI) {
+				$baseURI =~ s/^#*//;
+				$baseURI .= '#' unless $baseURI =~ m/\/$/;
+			}
+			$s = ODO::Node::Resource->new( ($baseURI || '') . $aboutUri);
 		}
 		$e->subject( $s );
 	}
@@ -629,8 +640,11 @@ sub nodeElement {
 	#
 	foreach my $propertyElement (@{ $e->children() }) {
 		# Propagate the baseURI that was selected to the children
-		$propertyElement->base_uri( $baseURI ) 
-			if($baseURI);
+		if ($baseURI) {
+			$baseURI =~ s/#*$//i;
+            $baseURI .= '#';
+			$propertyElement->base_uri( $baseURI );
+		}
 
 		$self->propertyElt($propertyElement);
 	}
