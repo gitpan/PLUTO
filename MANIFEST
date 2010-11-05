@@ -154,7 +154,7 @@ lib/ODO/Vocabulary.pm
 lib/PLUTO.pm
 LICENSE
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
 META.yml
 README
 t/00_base.t

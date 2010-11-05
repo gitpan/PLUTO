@@ -7,7 +7,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.91'
+generated_by: 'Module::Install version 1.00'
 license: eclipse
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -42,4 +42,4 @@ requires:
   XML::Namespace: 0.02
   XML::RegExp: 0.02
   XML::SAX: 0.96
-version: 0.28
+version: 0.29
