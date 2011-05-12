@@ -25,7 +25,6 @@ requires:
   Class::ISA: 0.32
   Class::Interfaces: 0.04
   Class::ParamParser: 1.041
-  DBD::mysql: 4
   Digest::MD5: 2.34
   Error: 0.17
   Exception::Class: 1.22
@@ -42,4 +41,4 @@ requires:
   XML::Namespace: 0.02
   XML::RegExp: 0.02
   XML::SAX: 0.96
-version: 0.29
+version: 0.30
